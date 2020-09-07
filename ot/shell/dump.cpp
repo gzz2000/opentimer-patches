@@ -82,6 +82,8 @@ List of commonly used commands:\n\
   help\n\
   version\n\
   dump_graph         [-o <file>]\n\
+  dump_tau2014_delay [-o <file>]\n\
+  dump_tau2014_timing [-o <file>]\n\
   dump_celllib       [-o <file>] [-min|-max] [-cell <name>]\n\
   dump_net_load      [-o <file>]\n\
   dump_pin_cap       [-o <file>]\n\
@@ -175,6 +177,62 @@ void Shell::_dump_graph() {
   else {
     if(std::ofstream ofs(output); ofs) {
       _timer.dump_graph(ofs);
+    }
+    else {
+      _es << "failed to open " << output << '\n';
+    }
+  }
+}
+
+// Procedure: dump_tau2014_delay
+void Shell::_dump_tau2014_delay() {
+
+  std::string token;
+  std::filesystem::path output;
+
+  while(_is >> token) {
+    if(token == "-o") {
+      if(!(_is >> output)) {
+        _es << "output file not given\n";
+        return;
+      }
+    }
+  }
+  
+  if(output.empty()) {
+    _timer.dump_tau2014_delay(_os);
+  }
+  else {
+    if(std::ofstream ofs(output); ofs) {
+      _timer.dump_tau2014_delay(ofs);
+    }
+    else {
+      _es << "failed to open " << output << '\n';
+    }
+  }
+}
+
+// Procedure: dump_tau2014_timing
+void Shell::_dump_tau2014_timing() {
+
+  std::string token;
+  std::filesystem::path output;
+
+  while(_is >> token) {
+    if(token == "-o") {
+      if(!(_is >> output)) {
+        _es << "output file not given\n";
+        return;
+      }
+    }
+  }
+  
+  if(output.empty()) {
+    _timer.dump_tau2014_timing(_os);
+  }
+  else {
+    if(std::ofstream ofs(output); ofs) {
+      _timer.dump_tau2014_timing(ofs);
     }
     else {
       _es << "failed to open " << output << '\n';

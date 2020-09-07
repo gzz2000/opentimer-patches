@@ -84,6 +84,8 @@ class Shell {
     void _dump_help              ();
     void _dump_license           ();
     void _dump_graph             ();
+    void _dump_tau2014_delay     ();
+    void _dump_tau2014_timing    ();
     void _dump_taskflow           ();
     void _dump_celllib           ();
     void _dump_net_load          ();
@@ -162,6 +164,8 @@ class Shell {
       {"version",                 &Shell::_dump_version},
       {"license",                 &Shell::_dump_license},
       {"dump_graph",              &Shell::_dump_graph},
+      {"dump_tau2014_delay",      &Shell::_dump_tau2014_delay},
+      {"dump_tau2014_timing",     &Shell::_dump_tau2014_timing},
       {"dump_taskflow",           &Shell::_dump_taskflow},
       {"dump_celllib",            &Shell::_dump_celllib},
       {"dump_net_load",           &Shell::_dump_net_load},

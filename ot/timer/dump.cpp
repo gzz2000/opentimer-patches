@@ -22,6 +22,62 @@ void Timer::_dump_graph(std::ostream& os) const {
   os << "}\n";
 }
 
+// Function: dump_tau2014_delay
+void Timer::dump_tau2014_delay(std::ostream& os) const {
+  std::shared_lock lock(_mutex);
+  _dump_tau2014_delay(os);
+}
+
+// Function: _dump_tau2014_delay
+void Timer::_dump_tau2014_delay(std::ostream& os) const {
+  for(const auto &pi: _pis) {
+    os << "input " << pi.first << std::endl;
+  }
+  for(const auto &po: _pos) {
+    os << "output " << po.first << std::endl;
+  }
+  std::unordered_map<const Arc*, const Test*> arc2test;
+  for(const auto &test: _tests) {
+    arc2test[&test._arc] = &test;
+  }
+  for(const auto &arc: _arcs) {
+    std::string s1 = arc._from._name, s2 = arc._to._name;
+    if(_pis.find(s1) != _pis.end()) s1 = "vsource:" + s1;
+    if(_pos.find(s1) != _pos.end()) s1 = "vsink:" + s1;
+    if(_pis.find(s2) != _pis.end()) s2 = "vsource:" + s2;
+    if(_pos.find(s2) != _pos.end()) s2 = "vsink:" + s2;
+    if(auto it = arc2test.find(&arc); it != arc2test.end()) {
+      os << "setup " << s2 << " " << s1 << " " << *(it->second->constraint(MAX, RISE)) << std::endl;
+      os << "hold " << s2 << " " << s1 << " " << *(it->second->constraint(MIN, RISE)) << std::endl;
+    }
+    else {
+      float early, late;
+      for(int i = 0; i < 2; ++i) for(int j = 0; j < 2; ++j) {
+          int ii = j, jj = i ^ j;
+          if(arc._delay[0][ii][jj]) early = *arc._delay[0][ii][jj];
+          if(arc._delay[1][ii][jj]) late = *arc._delay[1][ii][jj];
+        }
+      os << s1 << " " << s2 << " " << early << " " << late << std::endl;
+    }
+  }
+}
+
+// Function: dump_tau2014_delay
+void Timer::dump_tau2014_timing(std::ostream& os) const {
+  std::shared_lock lock(_mutex);
+  _dump_tau2014_timing(os);
+}
+
+// Function: _dump_tau2014_timing
+void Timer::_dump_tau2014_timing(std::ostream& os) const {
+  const auto &clock = *_clocks.begin();
+  os << "clock " << clock.first << " " << clock.second._period << std::endl;
+  for(const auto &pi: _pis) {
+    auto it = _pins.find(pi.first);
+    os << "at " << pi.first << " " << *(it->second.at(MIN, RISE)) << " " << *(it->second.at(MAX, RISE)) << std::endl;
+  }
+}
+
 // Function: dump_taskflow
 void Timer::dump_taskflow(std::ostream& os) const {
   std::shared_lock lock(_mutex);
