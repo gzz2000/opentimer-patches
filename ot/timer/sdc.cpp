@@ -109,6 +109,42 @@ void Timer::_read_sdc(sdc::SetInputTransition& obj) {
 }
 
 // Procedure: _sdc
+// Sets input transition on pins or input ports relative to a clock signal, based on a driving cell model.
+void Timer::_read_sdc(sdc::SetDrivingCell& obj) {
+
+  assert(obj.port_list);
+
+  auto mask = sdc::TimingMask(obj.min, obj.max, obj.rise, obj.fall);
+
+  OT_LOGW("set_driving_cell not fully supported, so setting all related slew to same input. TODO: implement LUT here in OT.");
+
+  std::visit(Functors{
+    [&] (sdc::AllInputs&) {
+      for(auto& kvp : _pis) {
+        FOR_EACH_EL_RF_IF(el, rf, (mask | el) && (mask | rf)) {
+          _set_slew(kvp.second, el, rf, rf == RISE ? obj.input_transition_rise : obj.input_transition_fall);
+        }
+      }
+    },
+    [&] (sdc::GetPorts& get_ports) {
+      for(auto& port : get_ports.ports) {
+        if(auto itr = _pis.find(port); itr != _pis.end()) {
+          FOR_EACH_EL_RF_IF(el, rf, (mask | el) && (mask | rf)) {
+            _set_slew(itr->second, el, rf, rf == RISE ? obj.input_transition_rise : obj.input_transition_fall);
+          }
+        }
+        else {
+          OT_LOGE(obj.command, ": port ", std::quoted(port), " not found");
+        }
+      }
+    },
+    [] (auto&&) {
+      assert(false);
+    }
+  }, *obj.port_list);
+}
+
+// Procedure: _sdc
 // Sets output delay on pins or input ports relative to a clock signal.
 void Timer::_read_sdc(sdc::SetOutputDelay& obj) {
 

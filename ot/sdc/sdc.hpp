@@ -54,6 +54,30 @@ struct SetInputTransition {
 
 // ------------------------------------------------------------------------------------------------
 
+// SetDrivingCell
+// Set a fixed transition on input or inout ports based on a driving cell model
+struct SetDrivingCell {
+
+  inline static constexpr auto command = "set_driving_cell";
+
+  std::string clock;
+  std::string lib_cell;
+  std::string pin;
+  std::optional<float> input_transition_rise;
+  std::optional<float> input_transition_fall;
+  std::optional<std::byte> min;
+  std::optional<std::byte> max;
+  std::optional<std::byte> rise;
+  std::optional<std::byte> fall;
+  std::optional<std::byte> clock_fall;
+  std::optional<Object> port_list;
+
+  SetDrivingCell() = default;
+  SetDrivingCell(const Json&);
+};
+
+// ------------------------------------------------------------------------------------------------
+
 // SetOutputDelay
 struct SetOutputDelay {
 
@@ -132,6 +156,7 @@ struct SetClockUncertainty {
 using Command = std::variant<
   SetInputDelay,
   SetInputTransition,
+  SetDrivingCell,
   SetOutputDelay,
   SetLoad,
   CreateClock

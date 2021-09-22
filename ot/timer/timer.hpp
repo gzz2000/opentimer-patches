@@ -215,6 +215,7 @@ class Timer {
     void _read_sdc(sdc::SDC&);
     void _read_sdc(sdc::SetInputDelay&);
     void _read_sdc(sdc::SetInputTransition&);
+    void _read_sdc(sdc::SetDrivingCell&);
     void _read_sdc(sdc::SetOutputDelay&);
     void _read_sdc(sdc::SetLoad&);
     void _read_sdc(sdc::CreateClock&);

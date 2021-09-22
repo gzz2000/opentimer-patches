@@ -98,6 +98,9 @@ void SDC::read(const std::filesystem::path& path) {
       else if(c == "set_input_transition") {
         commands.emplace_back(std::in_place_type_t<SetInputTransition>{}, j);
       }
+      else if(c == "set_driving_cell") {
+        commands.emplace_back(std::in_place_type_t<SetDrivingCell>{}, j);
+      }
       else if(c == "set_output_delay") {
         commands.emplace_back(std::in_place_type_t<SetOutputDelay>{}, j);
       }
@@ -108,7 +111,7 @@ void SDC::read(const std::filesystem::path& path) {
         commands.emplace_back(std::in_place_type_t<CreateClock>{}, j);
       }
       else {
-        OT_LOGE("sdc command ", c, " not supported yet");
+        OT_LOGE("sdc command ", c, " not supported yet!");
       }
     }
 
@@ -167,6 +170,18 @@ SetInputDelay::SetInputDelay(const Json& json) {
     else if(key == "command") {
       OT_LOGE_IF(itr.value() != command, "wrong command field: ", itr.value());
     }
+    else if(key == "-rise") {
+      rise.emplace();
+    }
+    else if(key == "-fall") {
+      fall.emplace();
+    }
+    else if(key == "-min") {
+      min.emplace();
+    }
+    else if(key == "-max") {
+      max.emplace();
+    }
     else {
       OT_LOGE(command, ": ", std::quoted(key), " not supported");
     }
@@ -203,6 +218,39 @@ SetInputTransition::SetInputTransition(const Json& json) {
     }
     else if(key == "port_list") {
       port_list = parse_port(unquoted(itr.value()));
+    }
+    else if(key == "command") {
+      OT_LOGE_IF(itr.value() != command, "wrong command field: ", itr.value());
+    }
+    else {
+      OT_LOGE(command, ": ", std::quoted(key), " not supported");
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Constructor
+
+SetDrivingCell::SetDrivingCell(const Json &json) {
+  for(auto itr = json.begin(); itr != json.end(); ++itr) {
+    if(auto &key = itr.key(); key == "-lib_cell") {
+      lib_cell = itr.value();
+    }
+    else if(key == "-pin") {
+      pin = itr.value();
+    }
+    else if(key == "-input_transition_rise") {
+      input_transition_rise.emplace(std::stof(unquoted(itr.value())));
+    }
+    else if(key == "-input_transition_fall") {
+      input_transition_fall.emplace(std::stof(unquoted(itr.value())));
+    }
+    else if(key == "port_list") {
+      port_list = parse_port(unquoted(itr.value()));
+    }
+    else if(key == "-clock") {
+      clock = itr.value();
     }
     else if(key == "command") {
       OT_LOGE_IF(itr.value() != command, "wrong command field: ", itr.value());
