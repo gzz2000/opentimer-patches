@@ -64,7 +64,7 @@ PfxtCache Timer::_pfxt_cache(const SfxtCache& sfxt) const {
     if(!v) {
       continue;
     }
-    else if(auto s = *sfxt.__dist[k] + *v; s < 0.0f) {
+    else if(auto s = *sfxt.__dist[k] + *v) {
       pfxt._push(s, sfxt._S, k, nullptr, nullptr);
     }
   }
@@ -137,9 +137,7 @@ void Timer::_spur(PfxtCache& pfxt, const PfxtNode& pfx) const {
         auto w = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
         auto s = *pfxt._sfxt.__dist[v] + w - *pfxt._sfxt.__dist[u] + pfx.slack;
 
-        if(s < 0.0f) {
-          pfxt._push(s, u, v, arc, &pfx);
-        }
+        pfxt._push(s, u, v, arc, &pfx);
       }
     }
     u = *pfxt._sfxt.__tree[u];
