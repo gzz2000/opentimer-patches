@@ -1,3 +1,9 @@
+bin/
+build/
+example/
+unittest/
+ot/config.hpp
+
 # Compiled Object files
 *.slo
 *.lo
