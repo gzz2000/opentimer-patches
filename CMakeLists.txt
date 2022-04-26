@@ -19,12 +19,12 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
     message(FATAL_ERROR "\nOpenTimer requires clang++ at least v6.0")
   endif() 
-else()
-  message(FATAL_ERROR "\n\
-OpenTimer currently supports the following compilers:\n\
-- g++ v7.3 or above\n\
-- clang++ v6.0 or above\n\
-")
+# else()
+#   message(FATAL_ERROR "\n\
+# OpenTimer currently supports the following compilers:\n\
+# - g++ v7.3 or above\n\
+# - clang++ v6.0 or above\n\
+# ")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -42,6 +42,11 @@ if(CMAKE_EXE_LINKER_FLAGS)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
   endif()
 endif()
+
+set(CMAKE_CXX_ABI 0 CACHE STRING
+  "Choose the value for _GLIBCXX_USE_CXX11_ABI, options are: 0|1.")
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=${CMAKE_CXX_ABI})
+include(TorchExtension.cmake)
 
 message(STATUS "CMAKE_HOST_SYSTEM: ${CMAKE_HOST_SYSTEM}")
 message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
@@ -155,7 +160,7 @@ set(OT_CPP
 
 # Add OpenTimer library
 add_library(OpenTimer ${OT_CPP})
-
+target_link_libraries(OpenTimer torch)
 
 ###########################################################
 # Executables
@@ -166,7 +171,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 list(APPEND OT_LINK_FLAGS "")
 list(APPEND OT_LINK_FLAGS OpenTimer)
 list(APPEND OT_LINK_FLAGS Threads::Threads)
-list(APPEND OT_LINK_FLAGS stdc++fs)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND OT_LINK_FLAGS stdc++fs)
+endif()
+list(APPEND OT_LINK_FLAGS torch)
 message(STATUS "OT_LINK_FLAGS: ${OT_LINK_FLAGS}")
 
 # tau15

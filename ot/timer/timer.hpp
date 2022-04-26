@@ -18,6 +18,7 @@
 #include <ot/verilog/verilog.hpp>
 #include <ot/sdc/sdc.hpp>
 #include <ot/tau/tau15.hpp>
+#include <torch/script.h>
 
 namespace ot {
 
@@ -36,6 +37,7 @@ class Timer {
     // Builder
     Timer& set_num_threads(unsigned);
     Timer& read_celllib(std::filesystem::path, std::optional<Split> = {});
+    Timer& read_noise_models(std::filesystem::path);
     Timer& read_verilog(std::filesystem::path);
     Timer& read_spef(std::filesystem::path);
     Timer& read_sdc(std::filesystem::path);
@@ -174,6 +176,8 @@ class Timer {
     std::vector<Pin*> _scc_cands;
     std::vector<Pin*> _idx2pin;
     std::vector<Arc*> _idx2arc;
+
+    std::unordered_map<std::string, torch::jit::script::Module> _noise_models;
 
     std::vector<Endpoint*> _worst_endpoints(size_t);
     std::vector<Endpoint*> _worst_endpoints(size_t, Split);

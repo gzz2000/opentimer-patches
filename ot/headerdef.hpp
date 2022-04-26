@@ -48,11 +48,11 @@
 // get compiled correctly. We use the patch: 
 // https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=258854
 // to get rid of this.
-#if defined(__clang__)
-  #include <ot/patch/clang_variant.hpp>
-#else
-  #include <variant>
-#endif
+// #if defined(__clang__)
+//   #include <ot/patch/clang_variant.hpp>
+// #else
+#include <variant>
+// #endif
 
 // third-party include
 #include <ot/taskflow/taskflow.hpp>

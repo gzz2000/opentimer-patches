@@ -51,6 +51,7 @@ List of commonly used commands:\n\
 \n[Builder] operations to build the timer\n\n\
   set_num_threads    <N>\n\
   read_celllib       [-min|-max] <file>\n\
+  read_noise_models  <directory>\n\
   read_verilog       <file>\n\
   read_spef          <file>\n\
   read_sdc           <file>\n\

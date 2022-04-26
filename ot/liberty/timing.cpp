@@ -413,9 +413,11 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   if(!is_transition_defined(irf, orf)) {
     return std::nullopt;
   }
-  
+
+  torch::jit::script::Module *model {nullptr};
   const Lut* lut {nullptr};
 
+  model = noise_model_tp[orf] ? *noise_model_tp[orf] : nullptr;
   switch(orf) {
     case RISE:
       lut = cell_rise ? &(cell_rise.value()) : nullptr;
@@ -429,10 +431,22 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
       assert(false);
     break;
   };
+
+  if(model != nullptr) {
+    // use the model
+    std::vector<torch::jit::IValue> inputs;
+    float data[] = {slew, load, 0, 0};
+    inputs.push_back(torch::from_blob(data, {1, 4}));
+
+    // Execute the model and turn its output into a tensor.
+    at::Tensor output = model->forward(inputs).toTensor();
+    return output.item().toFloat();
+  }
   
   if(lut == nullptr) {
     return std::nullopt;
   }
+  OT_LOGW("Delay falling back to LUT here: ", noise_model_kw);
   
   // Case 1: scalar.
   if(lut->lut_template == nullptr) {     
@@ -486,9 +500,11 @@ std::optional<float> Timing::slew(Tran irf, Tran orf, float slew, float load) co
   if(!is_transition_defined(irf, orf)) {
     return std::nullopt;
   }
-  
+
+  torch::jit::script::Module *model {nullptr};  
   const Lut* lut {nullptr};
 
+  model = noise_model_trans[orf] ? *noise_model_trans[orf] : nullptr;
   switch(orf) {
 
     case RISE:
@@ -504,10 +520,22 @@ std::optional<float> Timing::slew(Tran irf, Tran orf, float slew, float load) co
     break;
   };
   
+  if(model != nullptr) {
+    // use the model
+    std::vector<torch::jit::IValue> inputs;
+    float data[] = {slew, load, 0, 0};
+    inputs.push_back(torch::from_blob(data, {1, 4}));
+
+    // Execute the model and turn its output into a tensor.
+    at::Tensor output = model->forward(inputs).toTensor();
+    return output.item().toFloat();
+  }
+  
   // No slew lut
   if(lut == nullptr) {
     return std::nullopt;
   }
+  OT_LOGW("Slew falling back to LUT here: ", noise_model_kw);
   
   // Case 1: scalar.
   if(lut->lut_template == nullptr) {     

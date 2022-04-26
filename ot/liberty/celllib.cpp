@@ -745,7 +745,7 @@ void Celllib::_apply_default_values() {
 
       // direction-specific default values
       if(!cpin.direction) {
-        OT_LOGW("cellpin ", cell.name, '/', cpin.name, " has no direction defined");
+        // OT_LOGW("cellpin ", cell.name, '/', cpin.name, " has no direction defined");
         continue;
       }
 

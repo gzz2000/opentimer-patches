@@ -1,0 +1,3 @@
+[submodule "thirdparty/pybind11"]
+	path = thirdparty/pybind11
+	url = https://gitee.com/mirrors/pybind11.git

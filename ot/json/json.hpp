@@ -9909,8 +9909,10 @@ class serializer
             o->write_character('0');
             return;
         }
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wtautological-compare"
         const bool is_negative = (x <= 0) and (x != 0);  // see issue #755
+#pragma clang diagnostic pop
         std::size_t i = 0;
 
         while (x != 0)

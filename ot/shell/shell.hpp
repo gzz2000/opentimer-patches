@@ -48,6 +48,7 @@ class Shell {
     void _read_verilog           ();      
     void _read_spef              ();         
     void _read_celllib           ();
+    void _read_noise_models      ();
     void _read_sdc               ();
     void _read_timing            ();
     void _set_at                 (); 
@@ -126,6 +127,7 @@ class Shell {
       {"read_verilog",            &Shell::_read_verilog},
       {"read_spef",               &Shell::_read_spef},
       {"read_celllib",            &Shell::_read_celllib},
+      {"read_noise_models",       &Shell::_read_noise_models},
       {"read_sdc",                &Shell::_read_sdc},
       {"read_timing",             &Shell::_read_timing},
       {"set_at",                  &Shell::_set_at},

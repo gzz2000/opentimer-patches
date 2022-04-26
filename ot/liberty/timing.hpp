@@ -2,6 +2,7 @@
 #define OT_LIBERTY_TIMING_HPP_
 
 #include <ot/liberty/lut.hpp>
+#include <torch/script.h>
 
 namespace ot {
 
@@ -95,6 +96,7 @@ std::string to_string(TimingType);
 struct Timing {
   
   std::string related_pin;
+  std::string noise_model_kw;
 
   std::optional<TimingSense> sense;         
   std::optional<TimingType> type;           
@@ -103,7 +105,9 @@ struct Timing {
   std::optional<Lut> rise_transition;       
   std::optional<Lut> fall_transition;       
   std::optional<Lut> rise_constraint;       
-  std::optional<Lut> fall_constraint;       
+  std::optional<Lut> fall_constraint;
+  std::optional<torch::jit::script::Module*> noise_model_tp[MAX_TRAN];
+  std::optional<torch::jit::script::Module*> noise_model_trans[MAX_TRAN];
 
   bool is_combinational() const;
   bool is_constraint() const; 

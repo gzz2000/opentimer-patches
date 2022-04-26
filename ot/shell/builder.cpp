@@ -128,6 +128,18 @@ void Shell::_read_celllib() {
   _timer.read_celllib(std::move(path), el);
 }
 
+// Procedure: read_noise_models
+void Shell::_read_noise_models() {
+
+  std::string token;
+  std::filesystem::path path;
+
+  while(_is >> token) {
+    path = std::move(token);
+    _timer.read_noise_models(std::move(path));
+  }
+}
+
 // Procedure: read_sdc
 void Shell::_read_sdc() {
   if(std::filesystem::path path; _is >> path) {
