@@ -39,7 +39,6 @@
 #include <random>
 #include <regex>
 #include <ratio>
-#include <filesystem>
 #include <optional>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -63,12 +62,15 @@
 // Top header declaration.
 #include <ot/config.hpp>
 
-// namespace std {
-// // namespace filesystem = experimental::filesystem;
-// namespace filesystem {
-// using namespace ::std::experimental::filesystem;
-// }
-// };
+#ifdef __APPLE__
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+
+namespace std {
+  namespace filesystem = experimental::filesystem;
+};
+#endif
 
 namespace ot {
 

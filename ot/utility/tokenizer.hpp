@@ -8,11 +8,16 @@
 #include <iostream>
 #include <algorithm>
 #include <regex>
-#include <filesystem>
 
-// namespace std {
-//   namespace filesystem = experimental::filesystem;
-// };
+#ifdef __APPLE__
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+
+namespace std {
+  namespace filesystem = experimental::filesystem;
+};
+#endif
 
 namespace ot {
 

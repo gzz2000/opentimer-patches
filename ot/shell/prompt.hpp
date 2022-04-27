@@ -40,15 +40,17 @@
 #include <cstring>
 #include <fstream>
 #include <string_view>
-#include <filesystem>
 #include <cassert>
 
+#ifdef __APPLE__
+#include <filesystem>
+#else
+#include <experimental/filesystem>
 
-// namespace std {
-
-// namespace filesystem = experimental::filesystem;
-
-// };
+namespace std {
+  namespace filesystem = experimental::filesystem;
+};
+#endif
 
 // ------------------------------------------------------------------------------------------------
 

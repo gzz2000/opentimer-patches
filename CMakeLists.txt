@@ -46,6 +46,7 @@ endif()
 set(CMAKE_CXX_ABI 0 CACHE STRING
   "Choose the value for _GLIBCXX_USE_CXX11_ABI, options are: 0|1.")
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=${CMAKE_CXX_ABI})
+add_definitions(-D_LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM)
 include(TorchExtension.cmake)
 
 message(STATUS "CMAKE_HOST_SYSTEM: ${CMAKE_HOST_SYSTEM}")

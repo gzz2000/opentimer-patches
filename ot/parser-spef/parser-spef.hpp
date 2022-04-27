@@ -13,11 +13,20 @@
 #include <array>
 #include <string_view>
 #include <optional>
-#include <filesystem>
 #include <fstream>
 #include <cmath>
 
 #include "pegtl/pegtl.hpp"
+
+#ifdef __APPLE__
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+
+namespace std {
+  namespace filesystem = experimental::filesystem;
+};
+#endif
 
 namespace spef {
 
