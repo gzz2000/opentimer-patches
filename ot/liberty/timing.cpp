@@ -408,7 +408,7 @@ void Timing::scale_capacitance(float s) {
 // Query the delay which is referenced by the output transition status, input slew, and driving 
 // load. The output transition status indicates the type of lut that should be used during the
 // linear interpolation or linear extrapolation.
-std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) const {
+std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load, float input_at) const {
 
   if(!is_transition_defined(irf, orf)) {
     return std::nullopt;
@@ -435,8 +435,8 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   if(model != nullptr) {
     // use the model
     std::vector<torch::jit::IValue> inputs;
-    float data[] = {slew, load, 0, 0};
-    inputs.push_back(torch::from_blob(data, {1, 4}));
+    float data[] = {slew, load, 0, 0, input_at};
+    inputs.push_back(torch::from_blob(data, {1, 5}));
 
     // Execute the model and turn its output into a tensor.
     at::Tensor output = model->forward(inputs).toTensor();
@@ -495,7 +495,7 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
 // Query the slew which is referenced by the output transition status, input slew, and driving 
 // load. The output transition status indicates the type of lut that should be used during the
 // linear interpolation or linear extrapolation.
-std::optional<float> Timing::slew(Tran irf, Tran orf, float slew, float load) const {
+std::optional<float> Timing::slew(Tran irf, Tran orf, float slew, float load, float input_at) const {
   
   if(!is_transition_defined(irf, orf)) {
     return std::nullopt;
@@ -523,8 +523,8 @@ std::optional<float> Timing::slew(Tran irf, Tran orf, float slew, float load) co
   if(model != nullptr) {
     // use the model
     std::vector<torch::jit::IValue> inputs;
-    float data[] = {slew, load, 0, 0};
-    inputs.push_back(torch::from_blob(data, {1, 4}));
+    float data[] = {slew, load, 0, 0, input_at};
+    inputs.push_back(torch::from_blob(data, {1, 5}));
 
     // Execute the model and turn its output into a tensor.
     at::Tensor output = model->forward(inputs).toTensor();

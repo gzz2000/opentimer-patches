@@ -101,7 +101,7 @@ void Arc::_fprop_slew() {
     [this] (TimingView tv) {
       FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
         auto lc = (_to._net) ? _to._net->_load(el, trf) : 0.0f;
-        if(auto so = tv[el]->slew(frf, trf, *_from._slew[el][frf], lc); so) {
+        if(auto so = tv[el]->slew(frf, trf, *_from._slew[el][frf], lc, *_from._at[el][frf]); so) {
           _to._relax_slew(this, el, frf, el, trf, *so);
         }
       }
@@ -128,7 +128,7 @@ void Arc::_fprop_delay() {
       FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
         auto lc = (_to._net) ? _to._net->_load(el, trf) : 0.0f;
         auto si = *_from._slew[el][frf];
-        _delay[el][frf][trf] = tv[el]->delay(frf, trf, si, lc);
+        _delay[el][frf][trf] = tv[el]->delay(frf, trf, si, lc, *_from._at[el][frf]);
       }
     }
   }, _handle);
